@@ -1,0 +1,144 @@
+version: '2.3'
+
+
+networks:
+  rag-app:
+    external: true
+
+
+volumes:
+  db:
+    external: true
+  dump:
+    external: true
+  model-store:
+    external: true
+
+
+services:
+
+  mixtral:
+    image: s-fx-20-v1-task1-mixtral:v1.1.3
+    privileged: true
+    runtime: nvidia
+    shm_size: 128gb
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    environment:
+      - CUDA_VISIBLE_DEVICES=0,1
+      - OMPI_ALLOW_RUN_AS_ROOT=1
+      - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+    volumes:
+      - "model-store:/model-store"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:8000/v2/health/ready"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      triton:
+        condition: service_healthy
+    networks:
+      - rag-app
+    ports:
+      - 9998:9998
+      - 9999:9999
+
+  chunking:
+    image: s-fx-20-v1-task1-chunking:v1.1.3
+    init: true
+    restart: always
+    ports:
+      - 5005:5005
+    command: uvicorn main:app --host 0.0.0.0 --port 5005 --forwarded-allow-ips '*'
+    networks:
+      - rag-app
+
+  triton:
+    image: s-fx-20-v1-task1-triton:v1.1.3
+    runtime: nvidia
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    restart: always
+    init: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:8000/v2/health/ready"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 10s
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    shm_size: 16g
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    depends_on:
+      - chunking
+    networks:
+      - rag-app
+
+  redis:
+    image: s-fx-20-v1-task1-redis:v1.1.3
+    restart: always
+    volumes:
+      - "dump:/data"
+      - "./redis/redis_health_check.sh:/usr/local/bin/redis_health_check.sh"
+      - "./redis/redis-stack.conf:/redis-stack.conf"
+    healthcheck:
+      test: ["CMD", "sh", "/usr/local/bin/redis_health_check.sh"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 20
+    depends_on:
+      - chunking
+      - triton
+    networks:
+      - rag-app
+
+  router:
+    image: s-fx-20-v1-task1-router:v1.1.3
+    restart: always
+    ports:
+      - "5006:5006"
+    command: uvicorn main:app --host 0.0.0.0 --port 5006 --forwarded-allow-ips '*'
+    environment:
+      - TRITON_HOST=triton
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - rag-app
+
+  judge:
+    image: s-fx-20-v1-task1-judge:v1.1.3
+    restart: always
+    ports:
+      - "5007:5007"
+    volumes:
+      - "db:/judge/db"
+    command: uvicorn main:app --host 0.0.0.0 --port 5007 --forwarded-allow-ips '*'
+    depends_on:
+      - router
+    networks:
+      - rag-app
+
+  web:
+    image: s-fx-20-v1-task1-web:v1.1.3
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./data:/web/data"
+    environment:
+      - REDIS_HOST=redis
+      - ROUTER_HOST=router
+    depends_on:
+      - router
+    networks:
+      - rag-app
