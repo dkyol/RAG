@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0-beta1/css/bootstrap.min.css" 
+        integrity="sha512-o/MhoRPVLExxZjCFVBsm17Pkztkzmh7Dp8k7/3JrtNCHh0AQ489kwpfA3dPSHzKDe8YCuEhxXq3Y71eb/o6amg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" 
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" 
+        referrerpolicy="no-referrer">
+    <link rel="shortcut icon" href="{{ url_for('static', path='img/favicon.ico') }}">
+    <style>
+        {% include 'css/base.css' %}
+    </style>
+
+    {% block styles %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home_page') }}">
+                <img alt="NVIDIA Corporation" title="NVIDIA Corporation"
+                    src="data:image/png;base64,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">
+                <div id="navbarBrandTitle">GTC DLI</div>
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_home %}{% endblock %}" aria-current="page" href="{{ url_for('home_page') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/docs" style="color: gold;">API Docs <i class="fas fa-bolt"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    {% block htmlcontent %}{% endblock %}
+
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js" 
+        integrity="sha512-pax4MlgXjHEPfCwcJLQhigY7+N8rt6bVvWLFyUMuxShv170X53TRzGPmPkZmGBhk+jikR8WBM4yl7A9WMHHqvg==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Vue JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.js"></script>
+    <!-- Axios for AJAX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+
+    {% block jscontent %}{% endblock %}
+</body>
+</html>

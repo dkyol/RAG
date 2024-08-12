@@ -1,0 +1,7 @@
+fastapi==0.109.0
+uvicorn==0.25.0
+ipykernel==6.28.0
+langchain==0.0.319
+redis==5.0.1
+tritonclient[http]==2.24.0
+pydantic==2.5.3

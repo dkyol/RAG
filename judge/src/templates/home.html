@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}GTC DLI: Techniques for Improving the Effectiveness of RAG Systems{% endblock %}
+{% block styles %}
+    <style>
+        {% include 'css/home.css' %}
+    </style>
+{% endblock %}
+{% block nav_home %}active{% endblock %}
+{% block htmlcontent %}
+    <div class="container">
+         <!-- Spinner -->
+         <div id="loader"></div>
+
+        <div id="app" class="d-none">
+            <p id="username"><a style="border-right: 1px solid black; padding-right: 5px;" href="#" v-on:click="showUsernameModal">Switch User</a> Username: [[ username ]]  </p>
+
+            <!-- Application Description -->
+            <div class="row app-desc mt-4 p-2 fs-5 text-center bg-light fw-light border rounded">
+                <p class="fw-bold mb-1">GTC DLI: Techniques for Improving the Effectiveness of RAG Systems</p>
+                <p class="mb-1">A selection of NVIDIA-related materials has been indexed here for search.</p>
+                <p class="mb-1">Use this interface to test and judge the performance of the retrieval system.</p>
+            </div>
+
+            <div id="stepOne" class="steps">
+
+                <h2 class="text-center mt-4">Step 1: What topic are you interested in?</h2>
+
+                <div class="row mt-4 justify-content-center fw-light">
+                    <p class="text-center mb-0 col-6">You can either choose to use <span class="fw-bold">Semantic Search</span> (a.k.a. Vector Search) 
+                        to describe what you're searching for in natural language or try a more traditional <span class="fw-bold">Keyword Search</span> to
+                        find specific terms.</p>
+                </div>
+
+                <!-- Input Type Selector -->
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-6">
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" v-model="searchType" v-bind:value="'semantic'" v-on:change="reset">
+                            <label class="btn btn-outline-primary" for="btnradio1" style="width: 50%">Semantic Search</label>
+
+                            <input type="radio" class="btn-check" name="btnradio2" id="btnradio2" autocomplete="off" v-model="searchType" v-bind:value="'keyword'" v-on:change="reset">
+                            <label class="btn btn-outline-primary" for="btnradio2" style="width: 50%">Keyword Search</label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="mt-4 mb-4">
+                    <div class="row">
+                    
+                        <div class="col-10" v-if="searchType === 'semantic'">
+                            <div class="input-group">
+                                <textarea class="form-control" id="query" v-model="query"
+                                    placeholder="Describe what you're searching for in natural language."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-6" v-if="searchType === 'keyword'">
+                            <input type="text" class="form-control" v-model="query" placeholder="Include search terms here.">
+                        </div>
+                        <div class="col-2" v-if="searchType === 'keyword'">
+                            <!-- <label class="form-label mt-auto">Keyword Search Type:</label> -->
+                            <select class="form-select mt-auto mb-2" size="1" v-model="keywordSearchField">
+                                <option value="content">All Text Content</option>
+                                <option value="document_title">Document Title</option>
+                                <option value="document_url">Document URL</option>
+                            </select>
+                        </div>
+                        <div class="col-2" v-if="searchType === 'keyword'">
+                            <!-- <label class="form-label mt-auto">Keyword Search Type:</label> -->
+                            <select class="form-select mt-auto mb-2" size="1" v-model="keywordSearchType">
+                                <option value="union">Default Search</option>
+                                <option value="exact">Exact Phrase Match</option>
+                                <option value="wildcard">Wildcard Search (Use *)</option>
+                                <option value="fuzzy">Fuzzy Match</option>
+                            </select>
+                        </div>
+                        <div class="col-2" v-if="searchType === 'semantic' | searchType === 'keyword'">
+                            <select class="form-select mt-auto" size="1" v-model="k">
+                                <option v-for="n in (1, 100)" :value="n">Top [[ n ]] Results</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="stepTwo" class="steps">
+                <h2 class="text-center mt-4">Step 2: What types of assets do you want to search for?</h2>
+
+                <div class="row mt-4 justify-content-center fw-light">
+                    <p class="text-center mb-4 col-6">Choose from a number of different NVIDIA-related text assets.
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="">
+                        <p class="fw-bold mb-1 text-center">Asset Types <a class="asset-type-group-link" href="#" title="Check/Uncheck All Asset Types"
+                            v-on:click="toggleAssetTypeGroup(null, $event)">(Check/Uncheck All)</a></p>
+                        <div class="d-flex flex-column flex-wrap" id="assetTypeGroupsContainer">
+                            <div v-for="atype_group in asset_type_groups" class="me-3 p-1">
+                                <p class="fw-bold mb-1"><a class="asset-type-group-link" href="#" title="Check/Uncheck These Asset Types"
+                                    :class="{ warning: atype_group['group'] === 'Internal' }"
+                                    v-on:click="toggleAssetTypeGroup(atype_group['group'], $event)">[[ atype_group['group'] ]]</a></p>
+
+                                <div class="form-check" v-for="atype in atype_group['group_members']">
+                                    <input class="form-check-input" type="checkbox" value="" v-bind:id="'checkBox_' + atype['name']" v-model="atype['display']">
+                                    <label class="form-check-label" v-bind:for="'checkBox_' + atype['name']">
+                                        [[ atype['display_title'] ]]
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="stepThree" class="steps">
+                <h2 class="text-center mt-4">Step 3: Search and Judge</h2>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary" v-on:click="submit()" :disabled="submitDisabled">Search</button>
+                </div>
+            </div>
+            
+            <div v-if="results.length > 0">                 
+                <h2 class="text-center mt-4">Output:</h2>
+
+                <div v-if="results.length > 1" class="row mt-4 mb-5 fw-light text-left">
+                    <div class="d-flex justify-content-center">
+                        <div class="d-flex justify-content-center bg-light border rounded">
+                            <div class="d-flex align-items-center p-3"><i aria-hidden="true" class="fas fa-info-circle fs-4"></i></div>
+                            <div class="p-3">
+                                <div>Note, the summarization model has a limit on the maximum number of words input at a time.</div>
+                                <div>Because your input text was very long, it was separated into chunks that were summarized individually.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="appOutput">
+    
+                    <div class="row">
+                        <!-- Copy link to these recs -->
+                        <div class="col-md">
+                            <div class="text-center">
+                                <button class="btn-white rounded p-2" v-on:click="copyLinkToRecs">
+                                    <i aria-hidden="true" class="fas fa-link" style="margin-right: 9px;"></i> Copy Link
+                                </button>
+                                <p>Share or bookmark your search for later reference.</p>
+                                <div id="linkToRecs" style="position: absolute; left: -9999px; text-align: left;"></div>
+                            </div>      
+                        </div>
+
+                        <!-- Copy all rec text -->
+                        <div class="col-md">
+                            <div class="text-center">
+                                <button class="btn-white rounded p-2" v-on:click="copyAllRecs">
+                                    <i aria-hidden="true" class="fas fa-copy" style="margin-right: 9px;"></i> Copy All Recs
+                                </button>
+                                <p>Copy all recommendations to clipboard.</p>
+                                <div id="allRecs" style="position: absolute; left: -9999px; text-align: left;"></div>
+                            </div>                               
+                        </div>
+
+                        <!-- Hide all rec text -->
+                        <div class="col-md">
+                            <div class="text-center">
+                                <button class="btn-white rounded p-2" v-on:click="toggleAllAssetVisibility">
+                                    <i aria-hidden="true" class="fas" v-bind:class="results_visible.every((x) => x ) ? 'fa-chevron-up' : 'fa-chevron-down'" style="margin-right: 9px;"></i> 
+                                    [[ results_visible.every((x) => x ) ? "Collapse" : "Expand" ]] All Recs
+                                </button>
+                                <p>Collapse or expand all recommendations.</p>
+                            </div>                               
+                        </div>
+                    </div>
+        
+
+                    <!-- Recs -->
+                    <div class="row mt-4">
+
+                        <!-- Single column for now -->
+                        <div class="col-12 mb-5">
+                            
+                            <!-- Asset loop -->
+                            <div v-for="(asset, index) in results" class="mb-4">
+
+                                <div class="mb-1">
+                                    <button v-on:click="copyRecs(index)" class="btn-white rounded px-2 py-1"><i aria-hidden="true" class="fas fa-copy" style="margin-right: 9px;"></i>Copy Recs</button>
+                                    <button v-on:click="removeAsset(index)" class="btn-white rounded px-2 py-1 me-1"><i aria-hidden="true" class="fas fa-times-circle" style="margin-right: 9px;"></i>Remove</button>
+                                    <button v-on:click="toggleAssetVisibility(index)" class="btn-white rounded px-2 py-1 me-1">
+                                        <i aria-hidden="true" class="fas" v-bind:class="results_visible[index] ? 'fa-chevron-up' : 'fa-chevron-down'" style="margin-right: 9px;"></i>
+                                        [[ results_visible[index] ? "Collapse" : "Expand" ]]
+                                    </button>
+                                </div>
+
+                                <div v-bind:id="'recs-container-' + index"  class="recs-container">
+                                    <p class="field-title"> [[ response_display_titles[index] ]]
+                                    </p>
+
+                                    <div v-if="results_visible[index]">
+                                        <!-- Item loop -->
+                                        <div v-for="(item, results_idx) in asset" class="mb-3">
+                                            <a class="fw-bold" v-bind:href="[[ item.document_url ]]" v-on:click="logClick(item.id, item.document_title, index)" v-on:click.middle="logClick(item.id, item.title, index)" target="_blank">[[ item.document_title ]]</a>
+                                            <div class="fw-bold" v-if="item.heading_section_index != null">[[ item.heading_section_title ]] (Section: [[ item.heading_section_index ]])</div>
+                                            <div class="row mb-2">
+                                                <div class="col-11">
+                                                    <div v-html="item.text"></div>
+                                                </div>
+
+                                                <div class="col-1 row text-center">
+                                                    <div class="col-6"> 
+                                                        <button v-on:click="vote(item.id, 1, response_asset_types[index], results_idx, asset.length)" class="vote-btn up-vote border rounded px-2 py-1"><i class="far fa-thumbs-up"></i></button>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <button v-on:click="vote(item.id, 0, response_asset_types[index], results_idx, asset.length)" class="vote-btn down-vote border rounded px-2 py-1"><i class="far fa-thumbs-down"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div id="submitAlert" class="alert alert-success fw-bold">Submitted!</div>
+
+            {% include 'submit_modal.html' %}
+
+            {% include 'error_modal.html' %}
+
+            {% include 'user_modal.html' %}
+        
+        </div>
+    </div>
+
+{% endblock %}
+{% block jscontent %}
+    <script>
+        {% include 'js/user.js' %}
+
+        {% include 'js/home.js' %}
+    </script>
+{% endblock %}

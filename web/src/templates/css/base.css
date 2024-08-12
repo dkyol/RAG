@@ -1,0 +1,158 @@
+@font-face {
+    font-family: NVIDIA Sans;
+    src: url('../static/fonts/NVIDIASans_Rg.ttf') format("truetype");
+}
+
+@font-face {
+    font-family: NVIDIA Sans;
+    src: url('../static/fonts/NVIDIASans_Bd.ttf') format("truetype");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: NVIDIA Sans;
+    src: url('../static/fonts/NVIDIASans_Lt.ttf') format("truetype");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: NVIDIA Sans;
+    src: url('../static/fonts/NVIDIASans_Md.ttf') format("truetype");
+    font-weight: 500
+}
+body {
+    font-family: "NVIDIA Sans", sans-serif;
+    margin-bottom: 9.5rem
+}
+
+a {
+    color: #76b900;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: #76b900;
+    text-decoration: underline;
+}
+
+.navbar-brand {
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 28px;
+    line-height: 28px;
+}
+
+a.navbar-brand:focus, a.navbar-brand:hover, a.nav-link:focus, a.nav-link:hover {
+    text-decoration: none;
+}
+
+#navbarBrandTitle {
+    display: inline-block;
+    vertical-align: middle;
+    /* padding-bottom: 6px; */
+    font-weight: bold;
+}
+
+.nav-item {
+    text-transform: uppercase;
+}
+
+.contact {
+    font-size: 16px;
+}
+
+#username {
+    text-align: right;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    background-color: #76b900;
+    border-color: #76b900;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #558600;
+    border-color: #4f7c00;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle {
+    background-color: #558600;
+    border-color: #4f7c00;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.show>.btn-primary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(118, 185, 0, 0.25);
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.form-control:focus, .form-select:focus, .btn-check:focus+.btn-outline-primary, .btn-outline-primary:focus,
+.btn-check:focus+.btn-primary, .btn-primary:focus {
+    border-color: #76b900;
+    box-shadow: 0 0 0 .2rem rgba(118, 185, 0, 0.25);
+}
+
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active {
+    color: #fff;
+    background-color: #76b900;
+    border-color: #76b900;
+}
+
+.btn-outline-primary {
+    color: #76b900;
+    border-color: #76b900;
+}
+
+.btn-outline-primary:hover {
+    background-color: #76b900;
+    border-color: #76b900;
+}
+
+.btn-white {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity))!important;
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-success-rgb),var(--bs-text-opacity))!important;
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)!important;
+}
+
+.btn-white:hover {
+    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+    border-color: var(--bs-btn-hover-border-color)!important;
+}
+
+#loader {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 1000;
+    width: 120px;
+    height: 120px;
+    margin: -76px 0 0 -76px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #76b900;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

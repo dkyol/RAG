@@ -1,0 +1,138 @@
+.app-desc {
+    padding: 1rem;
+}
+
+.app-desc a {
+    font-weight: bold;
+}
+
+.btn-light {
+    border-color: #6c757d;
+    color: #000;
+}
+
+.btn-light:hover {
+    border-color: #6c757d;
+    background-color: #e2e6ea;
+    color: #000;
+}
+
+.recs-container {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 16px;
+    padding: 6px 12px;
+    /*height: 100%;*/
+    /*min-height: 150px;*/
+    margin-bottom: 1rem;
+}
+
+p.field-title {
+    font-weight: bold;
+    margin-bottom: .5rem !important;
+}
+
+p.field {
+    /*margin-bottom: 2rem !important;*/
+    font-size: 20px;
+}
+
+p.field:empty:before {
+    content: '\a0';
+}
+
+p.field.longtext {
+    font-size: 16px;
+    white-space: pre-wrap;
+}
+
+.form-label {
+    font-weight: bold;
+    padding: 0;
+}  
+
+textarea#query {
+    height: 250px;
+    font-size: 20px;
+}
+
+.alert {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.fas.fa-info-circle {
+    font-size: 40px;
+}
+.searchCompanyContainer {
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+#copyAlert, #submitAlert {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.5s linear, opacity 0.5s linear;
+    z-index: 1000000;
+}
+#copyAlert.show, #submitAlert.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Don't think this animation is being used any longer */
+/* Add animation to "page content" */
+.animate-bottom {
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+    from { bottom:-100px; opacity:0 } 
+    to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+    from{ bottom:-100px; opacity:0 } 
+    to{ bottom:0; opacity:1 }
+}
+
+/* a.asset-type-group-link {
+    color: var(--bs-link-color);
+} */
+
+.form-check-input:checked {
+    background-color: #76b900;
+    border-color: #76b900;
+}
+
+a.asset-type-group-link.warning {
+    color: var(--bs-danger);
+}
+
+#assetTypeGroupsContainer {
+    max-height: 250px;
+}
+
+button.vote-btn {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity))!important;
+}
+
+button.vote-btn.up-vote {
+    background-color: rgba(var(--bs-success-rgb), 0.25) !important;
+    border: rgba(var(--bs-success-rgb), var(--bs-border-opacity)) !important;
+}
+
+button.vote-btn.down-vote {
+    background-color: rgba(var(--bs-danger-rgb), 0.25) !important;
+    border: rgba(var(--bs-danger-rgb), var(--bs-border-opacity)) !important;
+}

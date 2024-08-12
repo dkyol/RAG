@@ -1,0 +1,20 @@
+<!-- Cookie Username Modal -->
+<div class="modal fade" id="usernameModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="usernameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="usernameModalLabel">Username</h5>
+            </div>
+            <div class="modal-body">
+                Please provide your username so we can track your feedback:
+                <br>
+                <input class="my-3" placeholder="username" v-model="username"/> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" 
+                    v-if="username !== ''" v-on:click="associateUsername()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
